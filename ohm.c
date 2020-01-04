@@ -1,16 +1,32 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include "shared.h"
+
+struct clip_entry* insert_text(struct clipboard* cb, char* str, int len){
+      (void)cb;
+      (void)str;
+      (void)len;
+      return NULL;
+}
+
 int handle_conn(int sock){
       listen(sock, 0);
-      int peer;
+      int peer, len;
       while(1){
             int peer = accept(sock, NULL, NULL);
             if(peer == -1)continue;
-            printf("gotty\n");
+
+            read(peer, &len, sizeof(int));
+            char* str = malloc(sizeof(char)*len);
+            read(peer, str, sizeof(char)*len);
+
+            printf("\"%s\"\n", str);
       }
 }
 
