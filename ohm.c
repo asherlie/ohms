@@ -1,3 +1,9 @@
+#if 0
+============================
+|  o    h    m      s      |
+| ohm helps manage strings |
+============================
+#endif
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/un.h>
