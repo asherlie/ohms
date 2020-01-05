@@ -8,6 +8,12 @@
 
 #include "shared.h"
 
+void init_clipboard(struct clipboard* cb){
+      cb->cap = 100;
+      cb->n = 0;
+      cb->clips = malloc(sizeof(struct clip_entry)*cb->cap);
+}
+
 struct clip_entry* insert_text(struct clipboard* cb, char* str, int len){
       (void)cb;
       (void)str;
@@ -15,7 +21,7 @@ struct clip_entry* insert_text(struct clipboard* cb, char* str, int len){
       return NULL;
 }
 
-int handle_conn(int sock){
+int handle_conn(int sock, struct clipboard* cb){
       listen(sock, 0);
       int peer, len;
       while(1){
@@ -25,6 +31,8 @@ int handle_conn(int sock){
             read(peer, &len, sizeof(int));
             char* str = malloc(sizeof(char)*len);
             read(peer, str, sizeof(char)*len);
+
+            insert_text(cb, str, len);
 
             printf("\"%s\"\n", str);
       }
@@ -39,5 +47,8 @@ int main(){
 
       bind(sock, (struct sockaddr*)&sun, sizeof(struct sockaddr_un));
 
-      handle_conn(sock);
+      struct clipboard cb;
+      init_clipboard(&cb);
+
+      handle_conn(sock, &cb);
 }
