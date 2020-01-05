@@ -15,10 +15,16 @@ void init_clipboard(struct clipboard* cb){
 }
 
 struct clip_entry* insert_text(struct clipboard* cb, char* str, int len){
-      (void)cb;
-      (void)str;
-      (void)len;
-      return NULL;
+      if(cb->n == cb->cap){
+            cb->cap *= 2;
+            struct clip_entry* tmp_c = malloc(sizeof(struct clip_entry)*cb->cap);
+            memcpy(tmp_c, cb->clips, sizeof(struct clip_entry)*cb->n);
+            free(cb->clips);
+            cb->clips = tmp_c;
+      }
+      cb->clips[cb->n].entry = str;
+      cb->clips[cb->n].len = len;
+      return &cb->clips[cb->n++];
 }
 
 int handle_conn(int sock, struct clipboard* cb){
