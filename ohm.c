@@ -27,20 +27,37 @@ struct clip_entry* insert_text(struct clipboard* cb, char* str, int len){
       return &cb->clips[cb->n++];
 }
 
+void p_clips(struct clipboard* cb){
+      for(int i = 0; i < cb->n; ++i)
+            printf("%i: \"%s\"\n", i, cb->clips[i].entry);
+}
+
+/*
+ * INSERT:
+ *    int len
+ *    sizeof(char)*len string
+ */
 int handle_conn(int sock, struct clipboard* cb){
       listen(sock, 0);
-      int peer, len;
+      int header, peer, len;
       while(1){
             int peer = accept(sock, NULL, NULL);
             if(peer == -1)continue;
 
-            read(peer, &len, sizeof(int));
-            char* str = malloc(sizeof(char)*len);
-            read(peer, str, sizeof(char)*len);
+            read(peer, &header, sizeof(int));
 
-            insert_text(cb, str, len);
+             switch(header){
+                   case INSERT:{
+                         read(peer, &len, sizeof(int));
+                         char* str = malloc(sizeof(char)*len);
+                         read(peer, str, sizeof(char)*len);
 
-            printf("\"%s\"\n", str);
+                         insert_text(cb, str, len);
+                   }
+                   break;
+             }
+
+            p_clips(cb);
       }
 }
 

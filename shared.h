@@ -1,3 +1,7 @@
+enum msgtype {
+              INSERT = 0,
+             };
+
 struct clip_entry{
       int len;
       char* entry;

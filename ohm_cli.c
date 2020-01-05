@@ -8,6 +8,8 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include "shared.h"
+
 _Bool copy_text(int sock, char* str, int len){
       /* mktemp */
       struct sockaddr_un sun;
@@ -18,6 +20,9 @@ _Bool copy_text(int sock, char* str, int len){
             perror("connect");
             return 0;
       }
+      int insert = INSERT;
+      send(sock, &insert, sizeof(int), 0);
+
       send(sock, &len, sizeof(int), 0);
       send(sock, str, sizeof(char)*len, 0);
 
